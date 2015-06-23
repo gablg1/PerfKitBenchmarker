@@ -48,7 +48,7 @@ TEMP_DIR = os.path.join(tempfile.gettempdir(), 'perfkitbenchmarker')
 # The temporary directory on VMs. We cannot reuse GetTempDir()
 # because run_uri will not be available at time of module load and we need
 # to use this directory as a base for other module level constants.
-VM_TMP_DIR = '/tmp/pkb'
+VM_TMP_DIR = '/usr/local/tmp/pkb'
 
 # Default timeout for issuing a command.
 DEFAULT_TIMEOUT = 300

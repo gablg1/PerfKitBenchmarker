@@ -315,6 +315,7 @@ class BenchmarkSpec(object):
       firewall.AllowPort(vm, port)
     vm.AddMetadata(benchmark=self.benchmark_name)
     vm.WaitForBootCompletion()
+    vm.OnStartup()
     if FLAGS.scratch_disk_type == disk.LOCAL:
       vm.SetupLocalDisks()
     for disk_spec in vm.disk_specs:
@@ -322,7 +323,7 @@ class BenchmarkSpec(object):
 
     # This must come after Scratch Disk creation to support the
     # Containerized VM case
-    vm.OnStartup()
+    vm.PrepareVMEnvironment()
 
   def DeleteVm(self, vm):
     """Deletes a single vm and scratch disk if required.
