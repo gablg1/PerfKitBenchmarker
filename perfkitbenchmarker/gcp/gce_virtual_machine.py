@@ -30,7 +30,7 @@ import re
 from perfkitbenchmarker import disk
 from perfkitbenchmarker import errors
 from perfkitbenchmarker import flags
-from perfkitbenchmarker import linux_virtual_machine
+from perfkitbenchmarker import linux_virtual_machine as linux_vm
 from perfkitbenchmarker import virtual_machine
 from perfkitbenchmarker import vm_util
 from perfkitbenchmarker.gcp import gce_disk
@@ -193,15 +193,17 @@ class GceVirtualMachine(virtual_machine.BaseVirtualMachine):
     cmd.extend(util.GetDefaultGcloudFlags(self))
     vm_util.IssueCommand(cmd)
 
-class ContainerizedDebianBasedGceVirtualMachine(GceVirtualMachine,
-                               linux_virtual_machine.ContainerizedDebianMixin):
+
+class ContainerizedGceVirtualMachine(GceVirtualMachine,
+                                     linux_vm.ContainerizedDebianMixin):
   pass
 
+
 class DebianBasedGceVirtualMachine(GceVirtualMachine,
-                                   linux_virtual_machine.DebianMixin):
+                                   linux_vm.DebianMixin):
   pass
 
 
 class RhelBasedGceVirtualMachine(GceVirtualMachine,
-                                 linux_virtual_machine.RhelMixin):
+                                 linux_vm.RhelMixin):
   pass

@@ -162,7 +162,8 @@ class BaseLinuxMixin(virtual_machine.BaseOsMixin):
   @vm_util.Retry(log_errors=False, poll_interval=1)
   def WaitForBootCompletion(self):
     """Waits until VM is has booted."""
-    resp, _ = self.RemoteHostCommand('hostname', retries=1, suppress_warning=True)
+    resp, _ = self.RemoteHostCommand('hostname', retries=1,
+                                     suppress_warning=True)
     if self.bootable_time is None:
       self.bootable_time = time.time()
     if self.hostname is None:
@@ -266,9 +267,9 @@ class BaseLinuxMixin(virtual_machine.BaseOsMixin):
                                   suppress_warning)
 
   def RemoteHostCommand(self, command,
-                    should_log=False, retries=SSH_RETRIES,
-                    ignore_failure=False, login_shell=False,
-                    suppress_warning=False):
+                        should_log=False, retries=SSH_RETRIES,
+                        ignore_failure=False, login_shell=False,
+                        suppress_warning=False):
     """Runs a command on the VM.
 
     This is guaranteed to run on the host VM, whereas RemoteCommand might run
@@ -352,12 +353,12 @@ class BaseLinuxMixin(virtual_machine.BaseOsMixin):
     remote_location = '%s@%s:%s' % (
         target.user_name, target.ip_address, remote_path)
     self.RemoteHostCommand('scp -o StrictHostKeyChecking=no -i %s %s %s' %
-                       (REMOTE_KEY_PATH, source_path, remote_location))
+                           (REMOTE_KEY_PATH, source_path, remote_location))
 
   def AuthenticateVm(self):
     """Authenticate a remote machine to access all peers."""
     self.RemoteHostCopy(vm_util.GetPrivateKeyPath(),
-                  REMOTE_KEY_PATH)
+                        REMOTE_KEY_PATH)
 
   def CheckJavaVersion(self):
     """Check the version of java on remote machine.
@@ -679,6 +680,7 @@ class DebianMixin(BaseLinuxMixin):
     package = packages.PACKAGES[package_name]
     return package.AptGetServiceName(self)
 
+
 class ContainerizedDebianMixin(DebianMixin):
   """Class representing a Virtual Machine that runs Remote
   Commands within a Docker Container running Ubuntu"""
@@ -693,8 +695,8 @@ class ContainerizedDebianMixin(DebianMixin):
   def InitDocker(self):
     """Initializes the docker container daemon."""
     init_docker_cmd = 'sudo docker run -d --net=host '
-    for disk in self.scratch_disks:
-      init_docker_cmd += '-v %s:%s ' % (disk.mount_point, disk.mount_point)
+    for sd in self.scratch_disks:
+      init_docker_cmd += '-v %s:%s ' % (sd.mount_point, sd.mount_point)
     init_docker_cmd += '%s sleep infinity ' % UBUNTU_DOCKER_IMAGE
 
     resp, _ = self.RemoteHostCommand(init_docker_cmd)
@@ -755,15 +757,15 @@ class ContainerizedDebianMixin(DebianMixin):
       if container_path[-1] == '/':
         container_path = os.path.join(container_path, file_name)
 
-      command = "cat %s | sudo docker exec -i %s bash -c 'cat > %s'" \
-        % (host_path, self.docker_id, container_path)
+      command = ("cat %s | sudo docker exec -i %s bash -c 'cat > %s'" %
+                 (host_path, self.docker_id, container_path))
       self.RemoteHostCommand(command)
     else:
       if container_path == '':
-        raise errors.VirtualMachine.RemoteExceptionError(
-          "Cannot copy from blank target")
+        raise errors.VirtualMachine.RemoteExceptionError('Cannot copy '
+                                                         'from blank target')
       command = "sudo docker cp %s:%s %s" % (self.docker_id,
-              container_path, host_path)
+                                             container_path, host_path)
       self.RemoteHostCommand(command)
 
   def RemoteCopy(self, file_path, remote_path='', copy_to=True):

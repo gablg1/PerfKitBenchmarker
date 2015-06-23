@@ -15,8 +15,8 @@
 """Container for all data required for a benchmark to run."""
 
 import logging
-import pickle
 import os
+import pickle
 
 from perfkitbenchmarker import disk
 from perfkitbenchmarker import flags
@@ -75,7 +75,7 @@ CLASSES = {
         VIRTUAL_MACHINE: {
             DEBIAN: gce_virtual_machine.DebianBasedGceVirtualMachine,
             RHEL: gce_virtual_machine.RhelBasedGceVirtualMachine,
-            UBUNTU_CONTAINER: gce_virtual_machine.ContainerizedDebianBasedGceVirtualMachine
+            UBUNTU_CONTAINER: gce_virtual_machine.ContainerizedGceVirtualMachine
         },
         NETWORK: gce_network.GceNetwork,
         FIREWALL: gce_network.GceFirewall
@@ -121,6 +121,7 @@ flags.DEFINE_enum(
     'them.')
 flags.DEFINE_string('scratch_dir', '/',
                     'Directory in the VM where scratch disks will be mounted.')
+
 
 class BenchmarkSpec(object):
   """Contains the various data required to make a benchmark run."""
